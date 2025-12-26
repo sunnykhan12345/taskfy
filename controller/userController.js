@@ -52,52 +52,51 @@ export const Signup = async (req, res) => {
 };
 // login api
 export const Signin = async (req, res) => {
+  console.log(req.body);
   try {
     const { email, password } = req.body;
 
+    // Check if user exists
     const user = await User.findOne({ email });
-
     if (!user) {
-      return res.status(400).json({
-        message: "user not found!",
-        success: false,
-      });
+      return res.status(400).json({ message: "User does not exist." });
     }
 
-    //  compare password
-    const matchPass = await bcrypt.compare(password, user.password);
-
-    if (!matchPass) {
-      return res.status(400).json({
-        message: "password not match",
-        success: false,
-      });
+    // Check password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid credentials." });
     }
-    // token const
-    // token const
-    const token = Token({ _id: user._id });
+
+    // Generate token
+    const token = await Token(user._id);
 
     return res.status(200).json({
-      message: "user login successfully",
-      success: true,
+      message: "Signin successful!",
+      user,
       token,
     });
-  } catch (error) {
-    return res.status(500).json({
-      message: error.message,
-      success: false,
-    });
+  } catch (err) {
+    console.error(err);
+    return res
+      .status(500)
+      .json({ message: "Server Error", error: err.message });
   }
 };
-// logout
 
+// logout
 export const Logout = (req, res) => {
   try {
-    cookieStore.remove("tokane");
-    return res
-      .status(400)
-      .json({ message: "Logout succefully", success: true });
+    // Remove the token cookie
+    res.clearCookie("token");
+    return res.status(200).json({
+      message: "Logout successfully",
+      success: true,
+    });
   } catch (err) {
-    return res.status(200).json({ message: err.message, success: false });
+    return res.status(500).json({
+      message: err.message,
+      success: false,
+    });
   }
 };
