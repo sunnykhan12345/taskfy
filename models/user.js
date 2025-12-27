@@ -23,6 +23,17 @@ const userSchema = new mongoose.Schema(
       enum: ["user", "admin"],
       default: "user",
     },
+    avatar: {
+      // New field to store profile image URL
+      type: String,
+      default: "",
+    },
+    bio: {
+      // Optional user bio
+      type: String,
+      default: "",
+      trim: true,
+    },
   },
   { timestamps: true }
 );
