@@ -32,6 +32,7 @@ import { Logout, Signin, Signup } from "../controller/userController.js";
 import { authMiddleware } from "../middleware/isAuth.js";
 import { EditProfile } from "../controller/updateProfile.js";
 import { upload, UploadAvatar } from "../controller/uploadAvatar.js";
+import { createTeam, getMyTeams } from "../controller/teamController.js";
 
 const router = express.Router();
 
@@ -53,5 +54,10 @@ router.post(
   upload.single("avatar"), // multer middleware to parse the file
   UploadAvatar // controller to handle Cloudinary upload
 );
+// Create team
+router.post("/create-team", authMiddleware, createTeam);
+
+// Get teams of logged-in user
+router.get("/get-team", authMiddleware, getMyTeams);
 
 export default router;
