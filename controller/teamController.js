@@ -7,7 +7,6 @@ export const createTeam = async (req, res) => {
     if (!name) {
       return res.status(400).json({ message: "Team name is required" });
     }
-
     // Create team
     const team = await Team.create({
       name,
